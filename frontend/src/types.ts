@@ -71,3 +71,32 @@ export interface PortfolioResponse {
   overallRisk: RiskLevel
   commentary: string
 }
+
+export interface Watchlist {
+  id: number
+  name: string
+  createdAt: string
+  updatedAt: string
+  symbols: string[]
+}
+
+export interface WatchlistItemView {
+  symbol: string
+  name: string
+  sector: string
+  price: number
+  dayChangePct: number
+  known: boolean
+}
+
+export interface CreateWatchlistPayload {
+  name: string
+}
+
+export interface RenameWatchlistPayload {
+  name: string
+}
+
+export interface AddItemPayload {
+  symbol: string
+}

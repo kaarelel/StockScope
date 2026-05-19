@@ -1,0 +1,97 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-watchlists
+      author: stockscope
+      changes:
+        - createTable:
+            tableName: watchlists
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: session_id
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(120)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: watchlists
+            indexName: idx_watchlists_session
+            columns:
+              - column:
+                  name: session_id
+        - addUniqueConstraint:
+            tableName: watchlists
+            columnNames: session_id, name
+            constraintName: uk_watchlists_session_name
+
+  - changeSet:
+      id: 002-create-watchlist-items
+      author: stockscope
+      changes:
+        - createTable:
+            tableName: watchlist_items
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: watchlist_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_watchlist_items_watchlist
+                    references: watchlists(id)
+                    deleteCascade: true
+              - column:
+                  name: symbol
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: added_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: watchlist_items
+            columnNames: watchlist_id, symbol
+            constraintName: uk_watchlist_items_list_symbol
+        - createIndex:
+            tableName: watchlist_items
+            indexName: idx_watchlist_items_watchlist
+            columns:
+              - column:
+                  name: watchlist_id

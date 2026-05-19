@@ -1,15 +1,21 @@
 import axios from 'axios'
 import type {
+  AddItemPayload,
+  CreateWatchlistPayload,
   MarketInsight,
   MarketOverview,
   PortfolioRequest,
   PortfolioResponse,
+  RenameWatchlistPayload,
   Stock,
+  Watchlist,
+  WatchlistItemView,
 } from '../types'
 
 const api = axios.create({
   baseURL: '/api',
   timeout: 10_000,
+  withCredentials: true,
 })
 
 export const marketApi = {
@@ -40,6 +46,22 @@ export const portfolioApi = {
 
 export const insightsApi = {
   all: () => api.get<MarketInsight[]>('/insights').then((r) => r.data),
+}
+
+export const watchlistApi = {
+  list: () => api.get<Watchlist[]>('/watchlist').then((r) => r.data),
+  get: (id: number) => api.get<Watchlist>(`/watchlist/${id}`).then((r) => r.data),
+  create: (payload: CreateWatchlistPayload) =>
+    api.post<Watchlist>('/watchlist', payload).then((r) => r.data),
+  rename: (id: number, payload: RenameWatchlistPayload) =>
+    api.put<Watchlist>(`/watchlist/${id}`, payload).then((r) => r.data),
+  remove: (id: number) => api.delete<void>(`/watchlist/${id}`).then(() => undefined),
+  addItem: (id: number, payload: AddItemPayload) =>
+    api.put<Watchlist>(`/watchlist/${id}/items`, payload).then((r) => r.data),
+  removeItem: (id: number, symbol: string) =>
+    api.delete<Watchlist>(`/watchlist/${id}/items/${encodeURIComponent(symbol)}`).then((r) => r.data),
+  aggregatedItems: (limit = 5) =>
+    api.get<WatchlistItemView[]>('/watchlist/items', { params: { limit } }).then((r) => r.data),
 }
 
 export default api

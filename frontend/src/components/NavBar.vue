@@ -12,6 +12,7 @@ import { RouterLink } from 'vue-router'
       <nav class="nav-links">
         <RouterLink to="/" exact-active-class="active">Dashboard</RouterLink>
         <RouterLink to="/stocks" active-class="active">Aktsiad</RouterLink>
+        <RouterLink to="/watchlist" active-class="active">Watchlist</RouterLink>
         <RouterLink to="/portfolio" active-class="active">Portfell</RouterLink>
         <RouterLink to="/insights" active-class="active">Turuülevaated</RouterLink>
       </nav>

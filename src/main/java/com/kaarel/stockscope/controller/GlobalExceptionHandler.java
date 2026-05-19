@@ -1,5 +1,7 @@
 package com.kaarel.stockscope.controller;
 
+import com.kaarel.stockscope.watchlist.DuplicateWatchlistNameException;
+import com.kaarel.stockscope.watchlist.WatchlistNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +17,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", e.getMessage()));
+    }
+
+    @ExceptionHandler(WatchlistNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleWatchlistNotFound(WatchlistNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateWatchlistNameException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicate(DuplicateWatchlistNameException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of("error", e.getMessage()));
     }
 

@@ -24,6 +24,11 @@ const router = createRouter({
       component: () => import('../views/PortfolioView.vue'),
     },
     {
+      path: '/watchlist',
+      name: 'watchlist',
+      component: () => import('../views/WatchlistView.vue'),
+    },
+    {
       path: '/insights',
       name: 'insights',
       component: () => import('../views/InsightsView.vue'),
