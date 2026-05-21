@@ -63,6 +63,10 @@ function commentary(s: Stock): string {
 
   return parts.join(' ')
 }
+
+function createAlertHere(s: Stock) {
+  router.push({ name: 'alerts', query: { symbol: s.symbol } })
+}
 </script>
 
 <template>
@@ -94,6 +98,13 @@ function commentary(s: Stock): string {
               <ChangeCell :value="stock.dayChangePct" />
               <span class="muted" style="margin-left: 8px">eelmine: ${{ stock.previousClose.toFixed(2) }}</span>
             </div>
+            <button
+              class="btn"
+              style="margin-top: 12px"
+              @click="createAlertHere(stock)"
+            >
+              Create alert from here
+            </button>
           </div>
         </div>
       </div>

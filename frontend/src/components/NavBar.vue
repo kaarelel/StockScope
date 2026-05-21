@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import NotificationBell from './NotificationBell.vue'
 </script>
 
 <template>
@@ -13,9 +14,11 @@ import { RouterLink } from 'vue-router'
         <RouterLink to="/" exact-active-class="active">Dashboard</RouterLink>
         <RouterLink to="/stocks" active-class="active">Aktsiad</RouterLink>
         <RouterLink to="/watchlist" active-class="active">Watchlist</RouterLink>
+        <RouterLink to="/alerts" active-class="active">Alerts</RouterLink>
         <RouterLink to="/portfolio" active-class="active">Portfell</RouterLink>
         <RouterLink to="/insights" active-class="active">Turuülevaated</RouterLink>
       </nav>
+      <NotificationBell />
     </div>
   </header>
 </template>
@@ -37,6 +40,11 @@ import { RouterLink } from 'vue-router'
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+}
+
+.nav-links {
+  flex: 1;
+  justify-content: center;
 }
 
 .brand {

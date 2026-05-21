@@ -1,0 +1,129 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-alerts
+      author: stockscope
+      changes:
+        - createTable:
+            tableName: alerts
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: session_id
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: symbol
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: condition
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target_price
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_triggered_at
+                  type: timestamp with time zone
+        - createIndex:
+            tableName: alerts
+            indexName: idx_alerts_session
+            columns:
+              - column:
+                  name: session_id
+
+  - changeSet:
+      id: 004-create-notifications
+      author: stockscope
+      changes:
+        - createTable:
+            tableName: notifications
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: session_id
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: alert_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_notifications_alert
+                    references: alerts(id)
+                    deleteCascade: true
+              - column:
+                  name: symbol
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: condition
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target_price
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: triggered_price
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: read_flag
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: notifications
+            indexName: idx_notifications_session_created
+            columns:
+              - column:
+                  name: session_id
+              - column:
+                  name: created_at

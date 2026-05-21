@@ -1,9 +1,12 @@
 import axios from 'axios'
 import type {
   AddItemPayload,
+  Alert,
+  CreateAlertPayload,
   CreateWatchlistPayload,
   MarketInsight,
   MarketOverview,
+  Notification,
   PortfolioRequest,
   PortfolioResponse,
   RenameWatchlistPayload,
@@ -62,6 +65,24 @@ export const watchlistApi = {
     api.delete<Watchlist>(`/watchlist/${id}/items/${encodeURIComponent(symbol)}`).then((r) => r.data),
   aggregatedItems: (limit = 5) =>
     api.get<WatchlistItemView[]>('/watchlist/items', { params: { limit } }).then((r) => r.data),
+}
+
+export const alertApi = {
+  list: () => api.get<Alert[]>('/alerts').then((r) => r.data),
+  create: (payload: CreateAlertPayload) =>
+    api.post<Alert>('/alerts', payload).then((r) => r.data),
+  remove: (id: number) => api.delete<void>(`/alerts/${id}`).then(() => undefined),
+}
+
+export const notificationApi = {
+  list: (unreadOnly = false) =>
+    api.get<Notification[]>('/notifications', { params: { unread: unreadOnly } }).then((r) => r.data),
+  unreadCount: () =>
+    api.get<{ count: number }>('/notifications/unread-count').then((r) => r.data.count),
+  markRead: (id: number) =>
+    api.patch<Notification>(`/notifications/${id}`).then((r) => r.data),
+  markAllRead: () =>
+    api.post<{ updated: number }>('/notifications/read-all').then((r) => r.data),
 }
 
 export default api

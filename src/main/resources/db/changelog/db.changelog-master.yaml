@@ -2,3 +2,9 @@ databaseChangeLog:
   - include:
       file: changes/001-init-watchlists.yaml
       relativeToChangelogFile: true
+  - include:
+      file: changes/002-init-alerts.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/003-notifications-unique-alert.yaml
+      relativeToChangelogFile: true

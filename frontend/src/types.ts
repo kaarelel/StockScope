@@ -100,3 +100,33 @@ export interface RenameWatchlistPayload {
 export interface AddItemPayload {
   symbol: string
 }
+
+export type AlertCondition = 'ABOVE' | 'BELOW'
+
+export interface Alert {
+  id: number
+  symbol: string
+  condition: AlertCondition
+  targetPrice: number
+  active: boolean
+  createdAt: string
+  lastTriggeredAt: string | null
+}
+
+export interface CreateAlertPayload {
+  symbol: string
+  condition: AlertCondition
+  targetPrice: number
+}
+
+export interface Notification {
+  id: number
+  alertId: number
+  symbol: string
+  condition: AlertCondition
+  targetPrice: number
+  triggeredPrice: number
+  message: string
+  read: boolean
+  createdAt: string
+}

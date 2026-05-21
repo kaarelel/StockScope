@@ -5,12 +5,13 @@ import com.kaarel.stockscope.model.Stock;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class MockStockData {
 
-    private static final List<Stock> STOCKS = List.of(
-            // Technology
+    private static final List<Stock> SEED = List.of(
             new Stock("AAPL", "Apple Inc.", "Technology", 232.41, 230.18, 0.97, 2.13, 4.85, 18.42, 3520, 58, 31.4, 0.45, RiskLevel.LOW,
                     "Apple on globaalne tehnoloogiahiid, mille tuluvood (iPhone, services, wearables) on stabiilsed ja kasvavad."),
             new Stock("MSFT", "Microsoft Corp.", "Technology", 421.83, 418.05, 0.90, 1.45, 3.22, 22.11, 3140, 22, 35.7, 0.72, RiskLevel.LOW,
@@ -34,7 +35,6 @@ public class MockStockData {
             new Stock("ADBE", "Adobe Inc.", "Technology", 502.18, 498.40, 0.76, 1.22, -2.45, -12.18, 222, 3, 41.8, 0.00, RiskLevel.MEDIUM,
                     "Adobe Creative Cloud on tööstusstandard. AI-konkurents avaldab survet."),
 
-            // Finance
             new Stock("JPM", "JPMorgan Chase", "Finance", 245.18, 243.05, 0.88, 1.95, 3.42, 42.18, 695, 9, 12.4, 2.10, RiskLevel.LOW,
                     "JPMorgan on USA suurim pank tugeva bilansiga ja konservatiivse riskikäitumisega."),
             new Stock("BAC", "Bank of America", "Finance", 47.22, 46.80, 0.90, 1.45, 2.88, 38.55, 365, 38, 14.2, 2.65, RiskLevel.LOW,
@@ -50,7 +50,6 @@ public class MockStockData {
             new Stock("BRK.B", "Berkshire Hathaway B", "Finance", 462.30, 460.10, 0.48, 0.85, 2.18, 32.41, 998, 4, 9.5, 0.00, RiskLevel.LOW,
                     "Buffett'i konglomeraat hajutatud ettevõtetega. Pikaajaliselt usaldusväärne."),
 
-            // Healthcare
             new Stock("JNJ", "Johnson & Johnson", "Healthcare", 162.45, 161.20, 0.78, 0.95, -1.22, 5.18, 390, 7, 24.5, 3.05, RiskLevel.LOW,
                     "J&J farmaatsia ja meditsiinitehnika ärid pakuvad stabiilsust ja dividendi."),
             new Stock("PFE", "Pfizer Inc.", "Healthcare", 27.85, 28.05, -0.71, -1.45, -3.22, -8.45, 158, 35, 0.0, 6.45, RiskLevel.MEDIUM,
@@ -62,7 +61,6 @@ public class MockStockData {
             new Stock("MRK", "Merck & Co.", "Healthcare", 102.45, 101.85, 0.59, 0.85, -2.18, -16.45, 260, 11, 22.8, 3.15, RiskLevel.LOW,
                     "Merck Keytruda jätkab dominantsina, kuid patendi-cliff lähemenemas."),
 
-            // Consumer
             new Stock("KO", "Coca-Cola Co.", "Consumer Goods", 65.18, 64.85, 0.51, 0.78, 1.85, 12.18, 280, 14, 26.4, 2.95, RiskLevel.LOW,
                     "Coca-Cola globaalne brand, dividenditõstja. Defensiivne valik."),
             new Stock("PEP", "PepsiCo Inc.", "Consumer Goods", 152.22, 151.40, 0.54, 0.92, 0.45, -8.18, 208, 5, 22.1, 3.55, RiskLevel.LOW,
@@ -76,7 +74,6 @@ public class MockStockData {
             new Stock("NKE", "Nike Inc.", "Consumer Goods", 78.18, 79.40, -1.54, -2.18, -5.45, -25.18, 118, 9, 22.8, 2.05, RiskLevel.MEDIUM,
                     "Nike kannatab Hiina nõudluse ja konkurentsi tõttu. Käimas on ümberstruktureerimine."),
 
-            // Energy
             new Stock("XOM", "Exxon Mobil", "Energy", 118.45, 117.80, 0.55, 1.05, 2.18, -2.45, 525, 14, 14.2, 3.45, RiskLevel.MEDIUM,
                     "ExxonMobil kasumlik nafta ja gaasi tootja. Tundlik toormehindade suhtes."),
             new Stock("CVX", "Chevron Corp.", "Energy", 158.40, 157.85, 0.35, 0.78, 1.45, -3.18, 290, 8, 14.8, 4.15, RiskLevel.MEDIUM,
@@ -84,7 +81,6 @@ public class MockStockData {
             new Stock("BP", "BP plc", "Energy", 32.18, 32.45, -0.83, -1.22, -4.18, -12.45, 88, 16, 11.5, 5.65, RiskLevel.HIGH,
                     "BP üleminek puhta energia suunas on aeglustunud. Strateegiline ebakindlus."),
 
-            // Industrial
             new Stock("BA", "Boeing Co.", "Industrial", 168.40, 165.85, 1.54, 2.85, 4.18, -22.45, 105, 6, 0.0, 0.00, RiskLevel.HIGH,
                     "Boeing tootmise tagasipöördumine ja kvaliteediprobleemid mõjutavad sentimenti."),
             new Stock("CAT", "Caterpillar Inc.", "Industrial", 365.40, 362.85, 0.70, 1.22, 2.45, 14.18, 178, 3, 17.2, 1.55, RiskLevel.MEDIUM,
@@ -92,7 +88,6 @@ public class MockStockData {
             new Stock("GE", "GE Aerospace", "Industrial", 188.40, 186.85, 0.83, 1.45, 3.22, 38.18, 200, 4, 35.4, 0.65, RiskLevel.MEDIUM,
                     "GE Aerospace jet-mootorite teenused on kõrge marginaali äri."),
 
-            // Communication
             new Stock("DIS", "Walt Disney Co.", "Communication", 105.40, 104.18, 1.17, 2.18, 4.45, -8.18, 192, 9, 32.1, 0.95, RiskLevel.MEDIUM,
                     "Disney+ kasumlikkus paraneb. Pargid pakuvad stabiilset rahavoogu."),
             new Stock("NFLX", "Netflix Inc.", "Communication", 745.18, 738.40, 0.92, 1.85, 4.22, 48.65, 320, 4, 45.2, 0.00, RiskLevel.MEDIUM,
@@ -100,14 +95,32 @@ public class MockStockData {
             new Stock("T", "AT&T Inc.", "Communication", 23.18, 23.05, 0.56, 0.85, 1.22, 18.45, 165, 25, 18.4, 4.85, RiskLevel.LOW,
                     "AT&T mobiilsidetulud stabiilsed, dividend katab võlga."),
 
-            // Real Estate
             new Stock("AMT", "American Tower", "Real Estate", 215.40, 213.85, 0.72, 1.18, 2.45, 8.22, 100, 2, 38.5, 3.10, RiskLevel.MEDIUM,
                     "American Tower mobiilimastide REIT. Pikaajalised lepingud."),
             new Stock("PLD", "Prologis Inc.", "Real Estate", 122.18, 121.40, 0.64, 1.05, 2.85, 4.18, 113, 3, 29.4, 3.25, RiskLevel.MEDIUM,
                     "Prologis logistikalogistika REIT. E-kaubanduse kasv toetab nõudlust.")
     );
 
+    private final Map<String, Stock> bySymbol = new ConcurrentHashMap<>();
+
+    public MockStockData() {
+        SEED.forEach(s -> bySymbol.put(s.symbol(), s));
+    }
+
     public List<Stock> all() {
-        return STOCKS;
+        return List.copyOf(bySymbol.values());
+    }
+
+    public void updatePrice(String symbol, double newPrice) {
+        bySymbol.computeIfPresent(symbol, (k, s) -> withPrice(s, newPrice));
+    }
+
+    private Stock withPrice(Stock s, double newPrice) {
+        double dayChangePct = s.previousClose() == 0 ? 0 : (newPrice - s.previousClose()) / s.previousClose() * 100.0;
+        return new Stock(
+                s.symbol(), s.name(), s.sector(), newPrice, s.previousClose(),
+                dayChangePct, s.weekChangePct(), s.monthChangePct(), s.yearChangePct(),
+                s.marketCapBillions(), s.volumeMillions(), s.peRatio(), s.dividendYield(),
+                s.risk(), s.summary());
     }
 }

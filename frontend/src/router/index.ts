@@ -29,6 +29,11 @@ const router = createRouter({
       component: () => import('../views/WatchlistView.vue'),
     },
     {
+      path: '/alerts',
+      name: 'alerts',
+      component: () => import('../views/AlertsView.vue'),
+    },
+    {
       path: '/insights',
       name: 'insights',
       component: () => import('../views/InsightsView.vue'),

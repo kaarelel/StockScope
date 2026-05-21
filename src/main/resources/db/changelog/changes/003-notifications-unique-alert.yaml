@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-notifications-unique-alert
+      author: stockscope
+      comment: "Belt-and-braces guard against duplicate notifications per alert (reviewer B2)."
+      changes:
+        - addUniqueConstraint:
+            tableName: notifications
+            columnNames: alert_id
+            constraintName: uk_notifications_alert

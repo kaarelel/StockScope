@@ -20,8 +20,9 @@ StockScope/
 
 - **Dashboard** — turu üldseis, indeksid, top tõusjad/langejad, aktiivsed + watchlist widget
 - **Aktsiad** — täielik tabel otsingu, sortimise ja sektorifiltriga (~40 aktsiat 8 sektoris)
-- **Stock detail** — hind, muutused, P/E, dividend, ülevaade ja automaatne kommentaar
+- **Stock detail** — hind, muutused, P/E, dividend, ülevaade ja automaatne kommentaar; nupp "Create alert from here"
 - **Watchlist** — kasutaja saab luua nimekirjasid ja lisada aktsiaid; salvestub PostgreSQL-i, scope'itud cookie-põhise sessiooni järgi
+- **Alerts & notifications** — kasutaja saab seada hinna-läve teavitusi (ABOVE / BELOW). `@Scheduled` job (30s) drift'ib mock-hindu ja vallandab täidetud tingimusega alertid. NavBar bell näitab lugemata teavituste arvu + viimase 10 dropdown'is.
 - **Portfell** — kujuteldav investeering, sektorite jaotus, tootlus, üldine risk
 - **Turuülevaated** — demo-trendid ja sektoripõhised tähelepanekud
 
@@ -66,12 +67,28 @@ Tootmiseks kasuta env-muutujaid: `DB_URL`, `DB_USER`, `DB_PASSWORD`.
 | PUT | `/api/watchlist/{id}/items` | Lisa sümbol (idempotent, case-insensitive) |
 | DELETE | `/api/watchlist/{id}/items/{symbol}` | Eemalda sümbol |
 | GET | `/api/watchlist/items?limit=5` | Agregaat: top N watchlist-aktsiat hindadega |
+| GET | `/api/alerts` | Sessioonipõhised alertid |
+| POST | `/api/alerts` | Loo alert (body: `{"symbol","condition":"ABOVE"\|"BELOW","targetPrice"}`); 201 + Location |
+| DELETE | `/api/alerts/{id}` | Kustuta alert (omanik-sessioon ainult) |
+| GET | `/api/notifications` | Teavitused uuemast vanemani (`?unread=true` filter) |
+| GET | `/api/notifications/unread-count` | Lugemata teavituste arv |
+| PATCH | `/api/notifications/{id}` | Märgi loetuks |
+| POST | `/api/notifications/read-all` | Märgi kõik loetuks |
 
 ### Cookie-põhine sessioon
 
 Kõik watchlist-päringud on scope'itud `STOCKSCOPE_SESSION` cookie'le. Esmakordsel päringul filter loob uue UUID-väärtuse ja saadab cookie tagasi (`HttpOnly`, `SameSite=Lax`, 1-aastane). Kaks erinevat sessiooni ei näe teineteise watchlistisid.
 
 **NB!** See on demo-tasandi anonymous session, mitte täis-autentimine. Cookie kopeerimine teisele kasutajale annaks ligipääsu — produktsiooni jaoks vajab eraldi auth-epicit.
+
+### Alerts scheduler
+
+`AlertScheduler` käivitub iga 30 sekundi tagant (`fixedDelay`). Iga tick:
+1. `PriceDriftService` rakendab igale mock-aktsiale juhusliku ±1.5% drift'i (NB: vahemikus seatakse päevamuutus dünaamiliselt).
+2. `AlertEvaluator` käib läbi kõik aktiivsed alertid ja loob teavituse, kui hind ületab/langeb läbi sihtmäära. Triggerinud alert deaktiveeritakse (üks teavitus per alert).
+3. Sessioonipõhine teavituste cap on 100 — uusim sissetulev töötlus kustutab vanimad.
+
+Scheduleri saab testidesse keelata propertyga `stockscope.alerts.scheduler.enabled=false`.
 
 ### Testid
 
